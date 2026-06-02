@@ -1,38 +1,64 @@
 import { useEffect, useState } from "react"
-import { ScrollView, StyleSheet, Text, View } from "react-native"
+import { ScrollView, StyleSheet, View } from "react-native"
 
-import Card from "../design/Card"
+import Card from "#design/elements/Card"
+import { LoadingState } from "#design/elements/LoadingState"
+import Typography from "#design/elements/Typegraphy"
+import { type TemperatureUnit } from "#shared/settings"
 
-import {
-  fetchForecast,
-  type ForecastDayData,
-  type Location,
-} from "./weatherApi"
+import { between } from "../design/foundations/spacing"
+
+import { formatTemperature } from "./formatTemperature"
+import { type WeatherLocation } from "./types"
+import { fetchForecast, type ForecastDayData } from "./weatherApi"
 
 export const Forecast: React.FC<{
-  location: Location
-}> = ({ location }) => {
+  location?: WeatherLocation
+  units?: TemperatureUnit
+  refreshKey?: number
+}> = ({ location, units = "celsius", refreshKey = 0 }) => {
   const [data, setData] = useState<ForecastDayData[]>()
+  const [loading, setLoading] = useState(false)
 
   useEffect(() => {
     void (async () => {
+      if (!location) return
+
+      setLoading(true)
       try {
         const result = await fetchForecast(location)
         setData(result)
-      } catch (error) {
-        console.error(error)
+      } catch (err) {
+        console.error(err)
+      } finally {
+        setLoading(false)
       }
     })()
-  }, [location])
+  }, [location, refreshKey])
+
+  if (loading && !data) {
+    return (
+      <Card>
+        <LoadingState label="Loading forecast…" />
+      </Card>
+    )
+  }
 
   return (
     <Card>
       <ScrollView horizontal style={styles.days}>
         {data?.map(({ day, temperatureMax, temperatureMin, condition }) => (
           <View key={day} style={styles.day}>
-            <Text style={styles.temperatureMax}>{temperatureMax} C</Text>
-            <Text style={styles.temperatureMin}>{temperatureMin} C</Text>
-            <Text style={styles.condition}>{condition}</Text>
+            <Typography variant="muted" style={styles.dayLabel}>
+              {day.slice(5)}
+            </Typography>
+            <Typography variant="large">
+              {formatTemperature(temperatureMax, units)}
+            </Typography>
+            <Typography variant="muted">
+              {formatTemperature(temperatureMin, units)}
+            </Typography>
+            <Typography variant="label">{condition}</Typography>
           </View>
         ))}
       </ScrollView>
@@ -41,9 +67,15 @@ export const Forecast: React.FC<{
 }
 
 const styles = StyleSheet.create({
-  temperatureMax: { fontSize: 18 },
-  temperatureMin: { fontSize: 14, color: "#888" },
-  condition: { fontWeight: "bold" },
   days: { flexGrow: 0, flexDirection: "row" },
-  day: { flex: 1, alignItems: "center", marginHorizontal: 16 },
+  day: {
+    flex: 1,
+    alignItems: "center",
+    marginHorizontal: between,
+    minWidth: 72,
+  },
+  dayLabel: {
+    marginBottom: 4,
+    fontSize: 11,
+  },
 })

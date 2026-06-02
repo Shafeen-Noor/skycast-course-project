@@ -1,43 +1,46 @@
 const codeMap = {
   0: "Clear",
 
-  1: "Cloudy", // Mainly Clear
-  2: "Cloudy", // Partly Cloudy
-  3: "Overcast", // Overcast
+  1: "Cloudy",
+  2: "Cloudy",
+  3: "Overcast",
 
-  45: "Fog", // Fog
-  48: "Fog", // Depositing Rime Fog
+  45: "Fog",
+  48: "Fog",
 
-  51: "Light Rain", // Drizzle: Light
-  53: "Moderate Rain", // Drizzle: Moderate
-  55: "Heavy Rain", // Drizzle: Heavy
-  61: "Light Rain", // Rain: Light
-  63: "Moderate Rain", // Rain: Moderate
-  65: "Heavy Rain", // Rain: Heavy
-  80: "Light Rain", // Rain Showers: Light
-  81: "Moderate Rain", // Rain Showers: Moderate
-  82: "Heavy Rain", // Rain Showers: Heavy
+  51: "Light Rain",
+  53: "Moderate Rain",
+  55: "Heavy Rain",
+  56: "Light Rain",
+  57: "Heavy Rain",
+  61: "Light Rain",
+  63: "Moderate Rain",
+  65: "Heavy Rain",
+  66: "Light Rain",
+  67: "Heavy Rain",
+  80: "Light Rain",
+  81: "Moderate Rain",
+  82: "Heavy Rain",
 
-  56: "Light Rain", // Freezing Drizzle: Light
-  57: "Heavy Rain", // Freezing Drizzle: Heavy
-  66: "Light Rain", // Freezing  Rain: Light
-  67: "Heavy Rain", // Freezing Rain: Heavy
+  71: "Light Snow",
+  73: "Moderate Snow",
+  75: "Heavy Snow",
+  77: "Light Snow",
+  85: "Light Snow",
+  86: "Heavy Snow",
 
-  71: "Light Snow", // Snow: Light
-  73: "Moderate Snow", // Snow: Moderate
-  75: "Heavy Snow", // Snow: Heavy
-  77: "Light Snow", // Snow Grains
-  85: "Light Snow", // Snow Showers: Light
-  86: "Heavy Snow", // Snow Showers: Heavy
+  95: "Thunderstorm",
+  96: "Thunderstorm",
+  99: "Thunderstorm",
 } as const
 
 type WeatherCode = keyof typeof codeMap
-export type Weather = (typeof codeMap)[WeatherCode]
+export type Weather = (typeof codeMap)[WeatherCode] | "Unknown"
 
 export default function toWeather(input: number): Weather {
   if (input in codeMap) {
     return codeMap[input as WeatherCode]
   }
 
-  throw new Error("toWeather: Invalid input.")
+  return "Unknown"
 }

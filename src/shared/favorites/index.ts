@@ -1,0 +1,1 @@
+export { useFavoritesManager } from "./useFavorites"
