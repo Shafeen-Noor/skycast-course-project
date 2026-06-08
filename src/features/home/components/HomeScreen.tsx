@@ -21,9 +21,7 @@ export const HomeScreen: React.FC = () => {
     <ScrollView contentContainerStyle={styles.container}>
       <View style={styles.header}>
         <Typography variant="title">{settings.home.name}</Typography>
-        <Typography variant="muted">
-          Live weather · {settings.units}
-        </Typography>
+        <Typography variant="muted">Live weather · {settings.units}</Typography>
         <Pressable style={styles.refresh} onPress={handleRefresh}>
           <Typography variant="label">Refresh</Typography>
         </Pressable>

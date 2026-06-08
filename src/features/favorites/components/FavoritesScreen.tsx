@@ -1,5 +1,5 @@
 import { useState } from "react"
-import { Pressable, StyleSheet, View } from "react-native"
+import { FlatList, Pressable, StyleSheet, View } from "react-native"
 
 import TextField from "#design/elements/fields/Text"
 import FormGroup from "#design/elements/FormGroup"
@@ -47,59 +47,69 @@ export const FavoritesScreen: React.FC = () => {
   }
 
   return (
-    <View style={styles.container}>
-      <Typography variant="title">Saved cities</Typography>
-      <Typography variant="muted" style={styles.subtitle}>
-        add and remove cities.
-      </Typography>
+    <FlatList
+      style={styles.list}
+      contentContainerStyle={styles.content}
+      data={favorites}
+      keyExtractor={(favorite) => favorite.name}
+      ListHeaderComponent={
+        <View>
+          <Typography variant="title">Saved cities</Typography>
+          <Typography variant="muted" style={styles.subtitle}>
+            Add and remove cities. Tap a name to view its forecast.
+          </Typography>
 
-      <FormGroup label="City" hint="Display name">
-        <TextField onChange={setName} value={name} placeholder="Tokyo" />
-      </FormGroup>
-      <FormGroup label="Latitude">
-        <TextField
-          onChange={setLatitude}
-          value={latitude}
-          keyboardType="decimal-pad"
-          placeholder="35.6762"
-        />
-      </FormGroup>
-      <FormGroup label="Longitude">
-        <TextField
-          onChange={setLongitude}
-          value={longitude}
-          keyboardType="decimal-pad"
-          placeholder="139.6503"
-        />
-      </FormGroup>
+          <FormGroup label="City" hint="Display name">
+            <TextField onChange={setName} value={name} placeholder="Tokyo" />
+          </FormGroup>
+          <FormGroup label="Latitude">
+            <TextField
+              onChange={setLatitude}
+              value={latitude}
+              keyboardType="decimal-pad"
+              placeholder="35.6762"
+            />
+          </FormGroup>
+          <FormGroup label="Longitude">
+            <TextField
+              onChange={setLongitude}
+              value={longitude}
+              keyboardType="decimal-pad"
+              placeholder="139.6503"
+            />
+          </FormGroup>
 
-      <Pressable style={styles.addButton} onPress={() => void handleAdd()}>
-        <Typography variant="label">Add favorite</Typography>
-      </Pressable>
+          <Pressable style={styles.addButton} onPress={() => void handleAdd()}>
+            <Typography variant="label">Add favorite</Typography>
+          </Pressable>
 
-      {message ? (
-        <Typography variant="muted" style={styles.message}>
-          {message}
-        </Typography>
-      ) : null}
-
-      <View style={styles.list}>
-        {favorites.map((favorite) => (
-          <View key={favorite.name} style={styles.row}>
-            <Typography href={`/favorites/${favorite.name}`}>
-              {favorite.name}
+          {message ? (
+            <Typography variant="muted" style={styles.message}>
+              {message}
             </Typography>
-            <Pressable
-              onPress={() => {
-                void removeFavorite(favorite.name)
-              }}
-            >
-              <Typography variant="muted">Remove</Typography>
-            </Pressable>
-          </View>
-        ))}
-      </View>
-    </View>
+          ) : null}
+        </View>
+      }
+      ListEmptyComponent={
+        <Typography variant="muted" style={styles.empty}>
+          No saved cities yet.
+        </Typography>
+      }
+      renderItem={({ item: favorite }) => (
+        <View style={styles.row}>
+          <Typography href={`/favorites/${favorite.name}`}>
+            {favorite.name}
+          </Typography>
+          <Pressable
+            onPress={() => {
+              void removeFavorite(favorite.name)
+            }}
+          >
+            <Typography variant="muted">Remove</Typography>
+          </Pressable>
+        </View>
+      )}
+    />
   )
 }
 
@@ -109,6 +119,14 @@ const styles = StyleSheet.create({
     backgroundColor: "#f0f9ff",
     padding: 16,
     alignItems: "stretch",
+  },
+  list: {
+    flex: 1,
+    backgroundColor: "#f0f9ff",
+  },
+  content: {
+    padding: 16,
+    flexGrow: 1,
   },
   subtitle: {
     marginBottom: 16,
@@ -126,9 +144,9 @@ const styles = StyleSheet.create({
     textAlign: "center",
     marginBottom: 12,
   },
-  list: {
+  empty: {
     marginTop: 16,
-    gap: 12,
+    textAlign: "center",
   },
   row: {
     flexDirection: "row",

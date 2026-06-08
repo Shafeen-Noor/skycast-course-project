@@ -9,6 +9,8 @@ const Layout: React.FC = () => {
         options={{ title: "Notifications" }}
       />
       <Drawer.Screen name="motion" options={{ title: "Device Motion" }} />
+      <Drawer.Screen name="flat-list" options={{ title: "FlatList" }} />
+      <Drawer.Screen name="section-list" options={{ title: "SectionList" }} />
       <Drawer.Screen name="profile" options={{ title: "About" }} />
     </Drawer>
   )
